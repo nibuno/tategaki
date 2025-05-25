@@ -18,7 +18,7 @@ export const useTextStore = defineStore("text", () => {
     if (enableDashConversion.value) {
       // ハイフンを全角ハイフンに変換
       // 記号は縦表示になるため、全角ハイフンに変換することで綺麗に表示される
-      result = result.replace(/[-]/g, "ー");
+      result = result.replace(/[-−]/g, "ー");
     }
 
     return result;
@@ -54,6 +54,7 @@ export const useTextStore = defineStore("text", () => {
 // 数字変換関数
 function convertNumbers(text: string): string {
   const numberMap: { [key: string]: string } = {
+    // 半角数字を漢数字に変換するマッピング
     "0": "〇",
     "1": "一",
     "2": "二",
@@ -64,7 +65,19 @@ function convertNumbers(text: string): string {
     "7": "七",
     "8": "八",
     "9": "九",
+    //  全角数字を漢数字に変換するマッピング
+    "０": "〇",
+    "１": "一",
+    "２": "二",
+    "３": "三",
+    "４": "四",
+    "５": "五",
+    "６": "六",
+    "７": "七",
+    "８": "八",
+    "９": "九",
   };
 
-  return text.replace(/[0-9]/g, (match) => numberMap[match] || match);
+  // Unicode プロパティを使用（モダンブラウザ対応）
+  return text.replace(/\p{N}/gu, (match) => numberMap[match] || match);
 }
